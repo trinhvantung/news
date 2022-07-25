@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+<div th:replace="user/layout::head('Tin tức nóng nhất, tin tức mới nhất cập nhật liên tục 24H')"></div>
+</head>
+
+<body>
+	<div th:replace="user/layout::header"></div>
+
+	<div class="main">
+		<div class="container">
+			<!-- <div class="block">
+				<div class="banner">
+					<img th:src="@{user/img/banner.jpg}" alt="banner">
+				</div>
+			</div> -->
+			<div class="block">
+				<div class="row gy-4">
+					<th:block th:each="news,iterable:${newsList}">
+						<th:block th:if="${iterable.index <= 1}">
+							<div class="col-12 col-sm-12 col-md-6">
+								<div class="post-item-1">
+									<a th:href="@{'/bai-viet/' + ${news.slug}}">
+										<div class="post-item-1__image"
+											th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+										</div>
+										<div class="post-item-1__title" th:text="${news.title}"></div>
+									</a>
+								</div>
+							</div>
+						</th:block>
+					</th:block>
+				</div>
+				<br>
+				<div class="row gy-4">
+
+					<th:block th:each="news,iterable:${newsList}">
+						<th:block th:if="${iterable.index >= 2 && iterable.index <=4}">
+							<div class="col-12 col-sm-12 col-md-12 col-lg-4">
+								<div class="post-item-2">
+									<a th:href="@{'/bai-viet/' + ${news.slug}}">
+										<div class="post-item-2__image"
+											th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+										</div>
+										<div class="post-item-2__title" th:text="${news.title}"></div>
+									</a>
+								</div>
+							</div>
+						</th:block>
+					</th:block>
+				</div>
+			</div>
+
+			<div class="block">
+				<div class="row home-post-list-3 gy-3">
+					<div class="col-12 col-sm-12 col-md-12 col-lg-8">
+						<th:block th:each="news,iterable:${newsList}">
+							<th:block th:if="${iterable.index >= 5 && iterable.index <=9}">
+								<a th:href="@{'/bai-viet/' + ${news.slug}}" class="post-item-3">
+									<div class="post-item-3__image">
+										<div
+											th:style="${'background-image: url(' + news.getImageUrl() + ');'}"></div>
+									</div>
+									<div>
+										<div class="post-item-3__title" th:text="${news.title}">
+										</div>
+										<div class="post-item-3__description"
+											th:text="${news.description}"></div>
+									</div>
+								</a>
+							</th:block>
+						</th:block>
+					</div>
+					<div class="col-12 col-sm-12 col-md-12 col-lg-4">
+						<div class="row gy-4 gy-lg-2">
+							<th:block th:each="news,iterable:${newsList}">
+								<th:block
+									th:if="${iterable.index >= 10 && iterable.index <= 12}">
+									<div class="col-12 col-sm-12 col-md-12 col-lg-12">
+										<div class="post-item-2">
+											<a th:href="@{'/bai-viet/' + ${news.slug}}">
+												<div class="post-item-2__image"
+													th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+												</div>
+												<div class="post-item-2__title" th:text="${news.title}"></div>
+											</a>
+										</div>
+									</div>
+								</th:block>
+							</th:block>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="user/layout::footer"></div>
+</body>
+
+</html>

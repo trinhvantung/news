@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<div th:replace="user/layout::head(${category.name})"></div>
+</head>
+
+<body>
+	<div th:replace="user/layout::header"></div>
+
+
+	<div class="main">
+		<div class="post-list">
+			<div class="post-list__title">
+				<div>
+					<h2 th:text="${category.name}"></h2>
+				</div>
+			</div>
+			<div class="post-list__content">
+				<div class="container">
+					<div class="post-list-1">
+						<div class="row gy-4">
+							<th:block th:each="news,iterable:${page.getContent()}">
+								<th:block th:if="${iterable.index <= 1}">
+									<div class="col-12 col-sm-12 col-md-6">
+										<div class="post-item-1">
+											<a th:href="@{'/bai-viet/' + ${news.slug}}">
+												<div class="post-item-1__image"
+													th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+												</div>
+												<div class="post-item-1__title" th:text="${news.title}"></div>
+											</a>
+										</div>
+									</div>
+								</th:block>
+							</th:block>
+						</div>
+						<br>
+						<div class="row gy-4">
+							<div class="text-center h3 mt-5 pt-5" th:if="${page.getContent().size() == 0}">
+								Danh mục <i th:text="${category.name}"></i> chưa có bài viết
+							</div>
+							<th:block th:each="news,iterable:${page.getContent()}">
+								<th:block th:if="${iterable.index >= 2 && iterable.index <=4}">
+									<div class="col-12 col-sm-12 col-md-4">
+										<div class="post-item-1">
+											<a th:href="@{'/bai-viet/' + ${news.slug}}">
+												<div class="post-item-1__image"
+													th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+												</div>
+												<div class="post-item-1__title fs-15"
+													th:text="${news.title}"></div>
+											</a>
+										</div>
+									</div>
+								</th:block>
+							</th:block>
+						</div>
+					</div>
+
+					<div class="post-list-2">
+						<div class="col-12 col-sm-12 col-lg-10">
+
+							<th:block th:each="news,iterable:${page.getContent()}">
+								<th:block th:if="${iterable.index >= 5 && iterable.index <=9}">
+									<a th:href="@{'/bai-viet/' + ${news.slug}}">
+										<div class="post-item-3__image">
+											<div
+												th:style="${'background-image: url(' + news.getImageUrl() + ');'}">
+											</div>
+										</div>
+										<div>
+											<div class="post-item-3__title" th:text="${news.title}"></div>
+											<div class="post-item-3__description"
+												th:text="${news.description}"></div>
+										</div>
+									</a>
+								</th:block>
+							</th:block>
+						</div>
+					</div>
+				</div>
+
+				<!-- <button class="button-more mt-5">
+					<i class="fas fa-caret-down"></i> Xem thêm
+				</button> -->
+				<div class="pagination mt-5	"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<div th:replace="user/layout::footer"></div>
+	<script th:src="@{/user/js/pagination.js}"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		Pagination({
+			selector : ".pagination",
+			totalItem : /*[[${page.getTotalElements()}]]*/'',
+			itemPerPage : /*[[${page.getPageable().getPageSize()}]]*/'',
+			currentPage : /*[[${page.getNumber()} + 1]]*/'',
+			pageParam : "page"
+		});
+	</script>
+</body>
+
+</html>

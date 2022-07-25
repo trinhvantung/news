@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<div th:replace="admin/layout::head('Dashboard')"></div>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<div th:replace="admin/layout::menu"></div>
+		<!-- End of Menu -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<div th:replace="admin/layout::header"></div>
+				<!-- End of Header -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+					<!-- Page Heading -->
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+					</div>
+
+					<div class="row">
+
+						<!-- Earnings (Monthly) Card Example -->
+						<div class="col-xl-3 col-md-6 mb-4">
+							<div class="card border-left-primary shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<div
+												class="text-xl font-weight-bold text-primary text-uppercase mb-1">
+												Người dùng</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800 display-4"
+												th:text="${user}"></div>
+										</div>
+										<div class="col-auto">
+											<i class="fas fa-user fa-2x text-gray-300"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Earnings (Annual) Card Example -->
+						<div class="col-xl-3 col-md-6 mb-4">
+							<div class="card border-left-success shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<div
+												class="text-xl font-weight-bold text-success text-uppercase mb-1">
+												Danh mục</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800 display-4"
+												th:text="${category}"></div>
+										</div>
+										<div class="col-auto">
+											<i class="fas fa-fw fa-folder fa-2x text-gray-300"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Tasks Card Example -->
+						<div class="col-xl-3 col-md-6 mb-4">
+							<div class="card border-left-info shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<div
+												class="text-xl font-weight-bold text-info text-uppercase mb-1">Bài
+												viết</div>
+											<div class="row no-gutters align-items-center">
+												<div class="col-auto">
+													<div
+														class="h5 mb-0 mr-3 font-weight-bold text-gray-800 display-4"
+														th:text="${news}">50%</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-auto">
+											<i class="fas fa-newspaper fa-2x text-gray-300"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Pending Requests Card Example -->
+						<!-- <div class="col-xl-3 col-md-6 mb-4">
+							<div class="card border-left-warning shadow h-100 py-2">
+								<div class="card-body">
+									<div class="row no-gutters align-items-center">
+										<div class="col mr-2">
+											<div class="text-xl font-weight-bold text-warning text-uppercase mb-1">
+												Pending Requests</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+										</div>
+										<div class="col-auto">
+											<i class="fas fa-comments fa-2x text-gray-300"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> -->
+					</div>
+					<div style="max-width: 500px; margin: auto" class="mt-5">
+						<canvas id="chart-news-by-category"></canvas>
+						<i class="text-center d-block mt-3">Thống kê bài viết theo
+							danh mục</i>
+					</div>
+
+					<div class="mt-5">
+						<canvas id="chart-news-by-month"></canvas>
+						<div class="row justify-content-center mt-3">
+							<div class="col-3">
+								<input type="text" class="form-control" name="from-month"
+									id="from-month" placeholder="Bắt đầu" />
+							</div>
+							<div class="col-3">
+								<input type="text" class="form-control" name="to-month"
+									id="to-month" placeholder="Kết thúc" />
+							</div>
+							<div class="col-2">
+								<button id="btn-news-by-month" class="btn btn-primary">Lọc</button>
+							</div>
+						</div>
+						<i class="text-center d-block mt-3">Thống kê bài viết theo
+							tháng</i>
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Footer -->
+			<div th:replace="admin/layout::footer"></div>
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{admin/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<link
+		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css"
+		rel="stylesheet">
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{admin/js/sb-admin-2.min.js}"></script>
+	<script th:src="@{admin/js/chart.min.js}"></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		const newsByCategory = /*[[${newsByCategory}]]*/''
+		console.log(Object.keys(newsByCategory))
+
+		const chart1Element = document.getElementById("chart-news-by-category");
+		const chart1Color = []
+
+		for (let i = 0; i < Object.keys(newsByCategory).length; i++) {
+			chart1Color[i] = "#"
+					+ Math.floor(Math.random() * 16777215).toString(16);
+		}
+
+		const chart1 = new Chart(chart1Element, {
+			type : 'pie',
+			data : {
+				labels : Object.keys(newsByCategory),
+				datasets : [ {
+					label : 'My First Dataset',
+					data : Object.values(newsByCategory),
+					backgroundColor : chart1Color,
+					hoverOffset : 4
+				} ]
+			}
+		})
+
+		const chart2Element = document.getElementById("chart-news-by-month");
+		const chart2Color = []
+		const newsByMonth = /*[[${newsByMonth}]]*/''
+
+		for (let i = 0; i < Object.keys(newsByMonth).length; i++) {
+			chart2Color[i] = "#"
+					+ Math.floor(Math.random() * 16777215).toString(16);
+		}
+
+		const chart2 = new Chart(chart2Element, {
+			type : 'bar',
+			data : {
+				labels : Object.keys(newsByMonth),
+				datasets : [ {
+					data : Object.values(newsByMonth),
+					backgroundColor : [ 'rgba(255, 99, 132, 0.2)',
+							'rgba(255, 159, 64, 0.2)',
+							'rgba(255, 205, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)',
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(255, 159, 64, 0.2)',
+							'rgba(255, 205, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)',
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(255, 159, 64, 0.2)',
+							'rgba(255, 205, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(201, 203, 207, 0.2)' ],
+					borderColor : [ 'rgb(255, 99, 132)', 'rgb(255, 159, 64)',
+							'rgb(255, 205, 86)', 'rgb(75, 192, 192)',
+							'rgb(54, 162, 235)', 'rgb(153, 102, 255)',
+							'rgb(201, 203, 207)', 'rgb(54, 162, 235)',
+							'rgb(153, 102, 255)', 'rgb(201, 203, 207)',
+							'rgb(255, 99, 132)', 'rgb(255, 159, 64)',
+							'rgb(255, 205, 86)', 'rgb(75, 192, 192)',
+							'rgb(54, 162, 235)', 'rgb(153, 102, 255)',
+							'rgb(201, 203, 207)', 'rgb(54, 162, 235)',
+							'rgb(153, 102, 255)', 'rgb(201, 203, 207)',
+							'rgb(255, 99, 132)', 'rgb(255, 159, 64)',
+							'rgb(255, 205, 86)', 'rgb(75, 192, 192)',
+							'rgb(54, 162, 235)', 'rgb(153, 102, 255)',
+							'rgb(201, 203, 207)', 'rgb(54, 162, 235)',
+							'rgb(153, 102, 255)', 'rgb(201, 203, 207)' ],
+					borderWidth : 1
+				} ]
+			},
+			options : {
+				plugins : {
+					legend : {
+						display : false
+					}
+				}
+			}
+		})
+
+		$("#from-month, #to-month").datepicker({
+			format : "mm-yyyy",
+			startView : "months",
+			minViewMode : "months"
+		})
+		const btnNewsByMonth = document.getElementById("btn-news-by-month");
+		btnNewsByMonth.addEventListener("click", function() {
+			const from = document.getElementById("from-month").value;
+			const to = document.getElementById("to-month").value;
+			console.log(from, to);
+			if (from && to) {
+				btnNewsByMonth.disabled = true
+				btnNewsByMonth.innerText = "Xin chờ"
+				$.ajax({
+					url : `/admin/news-by-month`,
+					type : 'POST',
+					dataType : 'json',
+					data : {
+						startDate : from,
+						endDate : to
+					},
+					success : function(response) {
+						btnNewsByMonth.disabled = false
+						btnNewsByMonth.innerText = "Lọc"
+
+						chart2.data.labels = Object.keys(response)
+						chart2.data.datasets[0].data = Object.values(response)
+						chart2.update();
+					}
+				});
+			}
+		})
+	</script>
+</body>
+
+</html>

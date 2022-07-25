@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+	<div th:replace="user/layout::head('Đăng nhập')"></div>
+</head>
+
+<body>
+	<div th:replace="user/layout::header"></div>
+
+
+	<div class="main">
+		<div class="container">
+			<div class="login">
+				<div class="title center mt-3 mb-3">
+					Đăng nhập
+				</div>
+				<div class="login-form">
+					<div th:if="${param.error}" class="text-center">
+						<p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+					</div>
+					<form method="post" th:action="@{/dang-nhap}">
+						<div class="form-group mb-3">
+							<label for="email" class="form-label">Email</label>
+							<input type="text" class="form-control" id="email" placeholder="Email" name="email">
+						</div>
+						<div class="form-group mb-3">
+							<label class="form-label" for="password">Mật khẩu</label>
+							<input type="password" class="form-control" id="password" placeholder="Mật khẩu"
+								name="password">
+						</div>
+						<div class="form-group form-check mb-3">
+							<input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+							<label class="form-label form-check-label" for="remember-me">Nhớ tài khoản</label>
+						</div>
+						<div class="row">
+							<div class="col text-center">
+								<button class="px-5">Đăng nhập</button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col text-center mt-3">
+								<span>Chưa có tài khoản? <a th:href="@{/dang-ky}"><u>Đăng ký</u></a></span>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col text-center mt-1">
+								<a th:href="@{/quen-mat-khau}"><u>Quên mật khẩu</u></a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div th:replace="user/layout::footer"></div>
+</body>
+
+</html>

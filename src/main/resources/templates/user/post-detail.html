@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="user/layout::head(${news.title})"></div>
+</head>
+
+<body>
+<div th:replace="user/layout::header"></div>
+
+<div class="main">
+    <div class="post">
+        <div class="post__title">
+            <h1 th:text="${news.title}"></h1>
+            <div class="rating">
+                <div
+                        th:class="rating-star + ${reviewDetail['starResult'] >= 1 ? ' active' : ''}">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div
+                        th:class="rating-star + ${reviewDetail['starResult'] >= 2 ? ' active' : ''}">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div
+                        th:class="rating-star + ${reviewDetail['starResult'] >= 3 ? ' active' : ''}">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div
+                        th:class="rating-star + ${reviewDetail['starResult'] >= 4 ? ' active' : ''}">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div
+                        th:class="rating-star + ${reviewDetail['starResult'] >= 5 ? ' active' : ''}">
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="post__image">
+                <img th:src="@{${news.getImageUrl()}}" alt="">
+            </div>
+        </div>
+        <div class="container">
+            <div class="post__content">
+                <div th:utext="${news.content}"></div>
+            </div>
+
+            <!-- Review -->
+            <div class="post__review mt-5">
+                <div>
+                    <div class="title center mb-3">Đánh giá bài viết</div>
+                    <div class="post__review__detail">
+                        <div>
+                            <p>
+                                <th:block th:text="${reviewDetail['starResult']}"></th:block>
+                                <span>/5</span>
+                            </p>
+                            <div class="rating">
+                                <div
+                                        th:class="rating-star + ${reviewDetail['starResult'] >= 1 ? ' active' : ''}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div
+                                        th:class="rating-star + ${reviewDetail['starResult'] >= 2 ? ' active' : ''}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div
+                                        th:class="rating-star + ${reviewDetail['starResult'] >= 3 ? ' active' : ''}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div
+                                        th:class="rating-star + ${reviewDetail['starResult'] >= 4 ? ' active' : ''}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div
+                                        th:class="rating-star + ${reviewDetail['starResult'] >= 5 ? ' active' : ''}">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <span th:text="${reviewDetail['totalReview'] + ' đánh giá'}"></span>
+                        </div>
+                        <div>
+                            <th:block
+                                    th:each="reviewStarCount:${reviewDetail['reviewStarCounts']}">
+                                <div>
+                                    <span th:text="${reviewStarCount.star} + ' sao'"></span>
+                                    <!-- <div th:style="background-color: #EA9D02;"></div> -->
+                                    <!-- <div th:style="'background: linear-gradient(to right, #EA9D02 ' + ${reviewStarCount.percent} + '%, #E6E6E6 calc(100% - ' + ${reviewStarCount.percent} + '%));'"></div> -->
+                                    <div>
+                                        <div th:style="'width: ' + ${reviewStarCount.percent} + '%;'"></div>
+                                        <div></div>
+                                    </div>
+                                    <span th:text="${reviewStarCount.quantity} + '  đánh giá'"></span>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <div class="post__review__comment">
+
+                        <div sec:authorize="isAnonymous()"
+                             class="d-flex justify-content-center mb-5">
+                            Đăng nhập để đánh giá bài viết. &nbsp;<a
+                                style="color: #3288E6;" th:href="@{/dang-nhap}">Đăng nhập</a>
+                        </div>
+                        <div id="review-action">
+                            <th:block sec:authorize="isAuthenticated()">
+                                <form id="form-review" th:object="${review}" method="post"
+                                      th:if="${myReview == null}">
+										<textarea name="" id="content" rows="3" th:field="*{content}"
+                                                  required></textarea>
+                                        <div class="text-danger mt-0 d-none" id="error-review">Nội dung có độ dài từ 1 đến 255 ký tự</div>
+                                    <input type="hidden" id="star" th:value="5" th:field="*{star}">
+                                    <input type="hidden" id="news-id" th:value="${news.id}"
+                                           th:field="*{news.id}">
+                                    <div class="rating mb-2 rating-select"
+                                         style="font-size: 18px;">
+                                        <div class="rating-star active">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="rating-star active">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="rating-star active">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="rating-star active">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="rating-star active">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                    <button id="btn-review-submit" type="submit"
+                                            th:news-id="${news.id}">Gửi đánh giá
+                                    </button>
+                                </form>
+
+                                <div th:if="${myReview != null}"
+                                     class="d-flex align-items-center justify-content-center mb-4 mt-3">
+                                    <div>Đã đánh giá: &nbsp;</div>
+                                    <div class="rating" style="font-size: 18px;">
+                                        <div
+                                                th:class="rating-star + ${myReview.star >= 1 ? ' active' : ''}">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div
+                                                th:class="rating-star + ${myReview.star >= 2 ? ' active' : ''}">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div
+                                                th:class="rating-star + ${myReview.star >= 3 ? ' active' : ''}">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div
+                                                th:class="rating-star + ${myReview.star >= 4 ? ' active' : ''}">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div
+                                                th:class="rating-star + ${myReview.star >= 5 ? ' active' : ''}">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+
+                        <th:block th:each="review:${pageReview.getContent()}">
+                            <div class="review-comment">
+                                <div class="main-review-comment">
+                                    <img th:src="@{/user/img/user/user1.svg}" alt="">
+                                    <div>
+                                        <div class="review-comment__header">
+                                            <div>
+                                                <span th:text="${review.user.fullname}"></span> <span
+                                                    class="time-review" th:text="${review.createdDate}"></span>
+                                            </div>
+                                            <div>
+                                                <div class="rating">
+                                                    <div
+                                                            th:class="rating-star + ${review.star >= 1 ? ' active' : ''}">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                    <div
+                                                            th:class="rating-star + ${review.star >= 2 ? ' active' : ''}">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                    <div
+                                                            th:class="rating-star + ${review.star >= 3 ? ' active' : ''}">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                    <div
+                                                            th:class="rating-star + ${review.star >= 4 ? ' active' : ''}">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                    <div
+                                                            th:class="rating-star + ${review.star >= 5 ? ' active' : ''}">
+                                                        <i class="fas fa-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="review-comment__content"
+                                             th:text="${review.content}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+
+
+                        <div class="pagination pagination-review-comment mt-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comment -->
+            <div class="post__review mt-5">
+                <div>
+                    <div class="title center mb-3">bình luận</div>
+                    <div class="post__review__comment">
+                        <div sec:authorize="isAnonymous()"
+                             class="d-flex justify-content-center mb-5">
+                            Đăng nhập để bình luận. &nbsp;<a
+                                style="color: #3288E6;" th:href="@{/dang-nhap}">Đăng nhập</a>
+                        </div>
+                        <th:block sec:authorize="isAuthenticated()">
+                            <form id="form-comment">
+                                <textarea name="" id="" rows="3"></textarea>
+                                        <div class="text-danger mt-0 d-none" id="error-comment">Nội dung có độ dài từ 1 đến 255 ký tự</div>
+                                <button type="button" id="btn-send-comment">Gửi bình
+                                    luận
+                                </button>
+                            </form>
+                        </th:block>
+                        <div id="comment-list">
+                            <!-- <div class="comment">
+                                <div class="main-comment">
+                                    <img th:src="@{/user/img/user/user1.svg}" alt="">
+                                    <div>
+                                        <div class="comment__header">
+                                            <div>
+                                                <span>Trinh Van Tung</span> <span>8 giờ trước</span>
+                                            </div>
+                                        </div>
+                                        <div class="comment__content">Balo là một vật dụng
+                                            không thể thiếu của học sinh và dường như cứ đến đầu năm học
+                                            là phụ huynh lại đau đầu mua balo cho bé.</div>
+                                        <div class="comment__reply__button">Trả lời</div>
+                                    </div>
+                                </div>
+                                <div class="form-reply-comment"></div>
+                                <div class="reply-comment">
+                                    <div class="main-comment">
+                                        <img th:src="@{/user/img/user/user2.svg}" alt="">
+                                        <div>
+                                            <div class="comment__header">
+                                                <div>
+                                                    <span class="admin">Admin</span> <span>2 giờ trước</span>
+                                                </div>
+                                            </div>
+                                            <div class="comment__content">Balo xinh xắn , màu sắc
+                                                dễ thương, thiết kế đơn giản cho bé, các bé gái không ai
+                                                không mê những mẫu balo thế này.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="reply-comment">
+                                    <div class="main-comment">
+                                        <img th:src="@{/user/img/user/user2.svg}" alt="">
+                                        <div>
+                                            <div class="comment__header">
+                                                <div>
+                                                    <span class="admin">Admin</span> <span>2 giờ trước</span>
+                                                </div>
+                                            </div>
+                                            <div class="comment__content">Balo là một vật dụng
+                                                không thể thiếu của học sinh và dường như cứ đến đầu năm
+                                                học là phụ huynh lại đau đầu mua balo cho bé.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn-view-reply">Xem 3 phản hồi</div>
+                            </div>
+                            <div class="comment">
+                                <div class="main-comment">
+                                    <img th:src="@{/user/img/user/user1.svg}" alt="">
+                                    <div>
+                                        <div class="comment__header">
+                                            <div>
+                                                <span>Trinh Van Tung</span> <span>8 giờ trước</span>
+                                            </div>
+                                        </div>
+                                        <div class="comment__content">Balo xinh xắn , màu sắc
+                                            dễ thương, thiết kế đơn giản cho bé, các bé gái không ai
+                                            không mê những mẫu balo thế này.</div>
+                                        <div class="comment__reply__button">Trả lời</div>
+                                    </div>
+                                </div>
+                                <div class="form-reply-comment"></div>
+                            </div> -->
+                        </div>
+                        <button class="button-more mt-5" id="btn-more-comment">
+                            <i class="fas fa-caret-down"></i> Xem thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="toast align-items-center" role="alert"
+     aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body">Hello, world! This is a toast message.
+        </div>
+        <button type="button" class="btn-close me-2 m-auto"
+                data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<div th:replace="user/layout::footer"></div>
+<script th:src="@{/user/js/post-detail.js}"></script>
+<script th:src="@{/user/js/pagination.js}"></script>
+<script th:src="@{/user/jquery/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/user/moment/moment.min.js}"></script>
+<script th:src="@{/user/moment/moment.vi.min.js}"></script>
+<script th:src="@{/user/ws/sockjs.min.js}"></script>
+<script th:src="@{/user/ws/stomp.min.js}"></script>
+
+
+<script th:inline="javascript" type="text/javascript">
+    const url = new URL(window.location);
+    if (url.searchParams.get("pageReview")) {
+        window.scrollTo(100, document.querySelector(".post__review").offsetTop);
+    }
+
+    $(".time-review").each(function () {
+        let inner = this.innerText
+        this.innerText = moment(inner).fromNow();
+    })
+
+    setInterval(function () {
+        $(".time-comment").each(function () {
+            let time = this.getAttribute("time")
+            this.innerText = moment(time).fromNow();
+        })
+    }, 20000)
+
+    Pagination({
+        selector: ".pagination-review-comment",
+        totalItem: /*[[${pageReview.getTotalElements()}]]*/ '',
+        itemPerPage: /*[[${pageReview.getPageable().getPageSize()}]]*/ '',
+        currentPage: /*[[${pageReview.getNumber()} + 1]]*/ '',
+        pageParam: "pageReview"
+    });
+
+
+    // Review
+    const ratingStarSelects = document.querySelectorAll(".rating-select>.rating-star");
+    const ratingStarValue = document.getElementById("star");
+
+    for (let i = 0; i < ratingStarSelects.length; i++) {
+        ratingStarSelects[i].addEventListener("mouseover", function () {
+            ratingStarValue.value = i + 1;
+            for (let j = 0; j <= i; j++) {
+                ratingStarSelects[j].classList.add("active");
+            }
+            for (let j = i + 1; j < ratingStarSelects.length; j++) {
+                ratingStarSelects[j].classList.remove("active");
+            }
+        })
+    }
+
+    // Submit Review
+    const btnReviewSubmit = document.getElementById("btn-review-submit");
+    if (btnReviewSubmit) {
+        btnReviewSubmit.addEventListener("click", function (e) {
+
+            const url = `/bai-viet/${btnReviewSubmit.getAttribute("news-id")}/danh-gia`;
+            const star = document.getElementById("star").value;
+            const content = document.getElementById("content").value;
+            e.preventDefault();
+			if(!content) {
+				console.log("OK")
+				document.getElementById("error-review").classList.remove("d-none");
+				document.getElementById("error-review").classList.add("d-block");
+				return;
+			}
+
+			document.getElementById("error-review").classList.remove("d-block");
+            btnReviewSubmit.disabled = true;
+            $.ajax({
+                url,
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                data: JSON.stringify({
+                    star,
+                    content
+                })
+            }).done(function (result) {
+                location.reload();
+            });
+        })
+    }
+
+
+    // Comment
+    const sockJS = new SockJS("/ws");
+    stompClient = Stomp.over(sockJS);
+
+    stompClient.connect(
+        {},
+        function () {
+            stompClient.subscribe(`/topic/news/[[${news.id}]]`, onCommentReceived);
+
+            let urlWS = stompClient.ws._transport.url;
+            urlWS = urlWS.replaceAll("/websocket", "");
+            urlWS = urlWS.substring(urlWS.lastIndexOf("/") + 1);
+            sessionID = urlWS;
+
+            stompClient.subscribe(`/topic/news/[[${news.id}]]/comments/${sessionID}`, onCommentsReceived);
+
+            sendRequestComments(0)
+        },
+        function () {
+            console.log("ERROR");
+        }
+    );
+
+
+    // Receive new comment
+    function onCommentReceived(payload) {
+        const commentResult = JSON.parse(payload.body);
+        console.log(commentResult)
+        if (commentResult.parent == null) {
+            let commentElement = document.createElement("div");
+            commentElement.classList.add("comment");
+            commentElement.innerHTML = `
+		    		<div class="main-comment">
+						<img src="${commentResult.user.imageUrl}" alt="">
+							<div>
+								<div class="comment__header">
+									<div>
+										<span>${commentResult.user.fullname}</span> <span class="time-comment" time="${commentResult.createdDate}">${moment(commentResult.createdDate).fromNow()}</span>
+									</div>
+								</div>
+								<div class="comment__content">${commentResult.content}</div>
+								<div class="comment__reply__button">Trả lời</div>
+							</div>
+						</div>
+						<div class="form-reply-comment"></div>
+						<div class="list-reply-comment" id="reply-parent-${commentResult.id}"></div>
+		    		`
+            const formReplyCommnet = `
+	    			    <form id="form-reply-comment">
+	    			        <textarea name="" id="" rows="2" comment-id=${commentResult.id}></textarea>
+	    			        <div class="d-flex">
+	    			            <button type="button" class="btn-reply-submit">Trả lời</button>
+	    			            <button type="button" class="btn ml-2 button-close-reply-comment">Đóng</button>
+	    			        </div>
+	    			    </form>
+	    			    `
+            let element = document.createElement("div");
+            element.innerHTML = formReplyCommnet;
+            commentElement.getElementsByClassName("comment__reply__button")[0].addEventListener("click",
+                function () {
+                    commentElement.getElementsByClassName("form-reply-comment")[0].append(element);
+                });
+            element.getElementsByClassName("button-close-reply-comment")[0].addEventListener("click", function () {
+                this.closest(".form-reply-comment").innerHTML = ""
+            })
+            element.querySelector(".btn-reply-submit").addEventListener("click", function () {
+                const content = element.querySelector("textarea").value;
+                const parentId = element.querySelector("textarea").getAttribute("comment-id");
+                const newsId = /*[[${news.id}]]*/ '';
+
+                const comment = {
+                    content,
+                    parentId,
+                    newsId
+                }
+                sendComment(comment)
+                element.querySelector("textarea").value = ""
+            })
+            commentsView.prepend(commentElement);
+        } else {
+            const listReplyCommentId = `reply-parent-${commentResult.parent.id}`;
+            console.log(listReplyCommentId)
+            const listReplyComment = document.getElementById(listReplyCommentId);
+            if (listReplyComment) {
+                const replyComment = document.createElement("div");
+                replyComment.classList.add("reply-comment")
+                replyComment.innerHTML = `
+	    				<div class="main-comment">
+							<img src="${commentResult.user.imageUrl}" alt="">
+							<div>
+								<div class="comment__header">
+									<div>
+										<span>${commentResult.user.fullname}</span> <span class="time-comment" time="${comment.createdDate}">${moment(comment.createdDate).fromNow()}</span>
+									</div>
+								</div>
+								<div class="comment__content">${commentResult.content}</div>
+							</div>
+						</div>
+	    			`;
+                listReplyComment.prepend(replyComment);
+            }
+
+        }
+    }
+
+
+    // Send commend
+    function sendComment(payload) {
+    	if(!payload.content) {
+    		return;
+    	}
+        stompClient.send(`/app/comment/[[${news.id}]]`, {}, JSON.stringify(payload));
+    }
+
+    let commentList = [];
+    const commentsView = document.getElementById("comment-list");
+
+    // receive comment list
+    function onCommentsReceived(payload) {
+        const commentsResult = JSON.parse(payload.body);
+        console.log(commentsResult);
+        console.log(commentList)
+        const isLoggedIn = /*[[${#authorization.expression('isAuthenticated()')}]]*/ ''
+        let isReplyComment = false;
+        let parentId = null;
+        if (commentsResult.isLastPage) {
+            document.getElementById("btn-more-comment").remove();
+        }
+
+        if (commentsResult.isLastPage !== undefined) {
+            btnMoreComment.innerHTML = `<i class="fas fa-caret-down"></i> Xem thêm`;
+            btnMoreComment.disabled = false;
+        }
+
+        for (const comment of commentsResult.comments) {
+            if (!commentList.some(c => c.id === comment.id) && comment.parent == null) {
+                const formReplyCommnet = `
+	    			    <form id="form-reply-comment">
+	    			        <textarea name="" id="" rows="2" comment-id=${comment.id}></textarea>
+	    			        <div class="d-flex">
+	    			            <button type="button" class="btn-reply-submit">Trả lời</button>
+	    			            <button type="button" class="btn ml-2 button-close-reply-comment">Đóng</button>
+	    			        </div>
+	    			    </form>
+	    			    `
+
+
+                let commentElement = document.createElement("div");
+                commentElement.classList.add("comment");
+                commentElement.innerHTML = `
+	    				<div class="main-comment">
+							<img src="${comment.user.imageUrl}" alt="">
+							<div>
+								<div class="comment__header">
+									<div>
+										<span>${comment.user.fullname}</span> <span class="time-comment" time="${comment.createdDate}">${moment(comment.createdDate).fromNow()}</span>
+									</div>
+								</div>
+								<div class="comment__content">${comment.content}</div>
+								${isLoggedIn ? '<div class="comment__reply__button">Trả lời</div>' : ''}
+								
+							</div>
+						</div>
+						<div class="form-reply-comment"></div>
+						<div class="list-reply-comment" id="reply-parent-${comment.id}"></div>
+						${comment.countReply > 0 ? '<div class="btn-view-reply" id="btn-view-reply-' + comment.id + '" rest-reply="' + comment.countReply + '" comment-id="' + comment.id + '">Xem ' + comment.countReply + ' phản hồi</div>' : ''}
+	    			`
+
+                let element = document.createElement("div");
+                element.innerHTML = formReplyCommnet;
+                commentElement.getElementsByClassName("comment__reply__button")[0] && commentElement.getElementsByClassName("comment__reply__button")[0].addEventListener("click",
+                    function () {
+                        commentElement.getElementsByClassName("form-reply-comment")[0].append(element);
+                    });
+                element.getElementsByClassName("button-close-reply-comment")[0].addEventListener("click", function () {
+                    this.closest(".form-reply-comment").innerHTML = ""
+                })
+                element.querySelector(".btn-reply-submit").addEventListener("click", function () {
+                    const content = element.querySelector("textarea").value;
+                    const parentId = element.querySelector("textarea").getAttribute("comment-id");
+                    const newsId = /*[[${news.id}]]*/ '';
+
+                    const comment = {
+                        content,
+                        parentId,
+                        newsId
+                    }
+                    sendComment(comment)
+                    element.querySelector("textarea").value = ""
+                })
+
+                const btnViewReply = commentElement.querySelector(".btn-view-reply");
+                if (btnViewReply) {
+                    btnViewReply.addEventListener("click", function () {
+                        const parentId = this.getAttribute("comment-id")
+                        const offset = document.getElementById(`reply-parent-${parentId}`).childElementCount;
+                        sendRequestComments(offset, parentId)
+                    })
+                }
+
+                commentsView.append(commentElement);
+                commentList = [...commentList, comment];
+            } else if (!commentList.some(c => c.id === comment.id) && comment.parent != null) {
+                parentId = comment.parent.id
+                isReplyComment = true;
+                const listReplyCommentId = `reply-parent-${comment.parent.id}`;
+                const listReplyComment = document.getElementById(listReplyCommentId);
+                if (listReplyComment) {
+                    const replyComment = document.createElement("div");
+                    replyComment.classList.add("reply-comment")
+                    replyComment.innerHTML = `
+		    				<div class="main-comment">
+								<img src="${comment.user.imageUrl}" alt="">
+								<div>
+									<div class="comment__header">
+										<div>
+											<span>${comment.user.fullname}</span> <span class="time-comment" time="${comment.createdDate}">${moment(comment.createdDate).fromNow()}</span>
+										</div>
+									</div>
+									<div class="comment__content">${comment.content}</div>
+								</div>
+							</div>
+		    			`;
+                    listReplyComment.append(replyComment);
+                }
+            }
+        }
+
+        if (isReplyComment && parentId != null) {
+            const btnViewReply = document.getElementById(`btn-view-reply-${parentId}`);
+            console.log("ParentID: " + parentId);
+            console.log(`btn-view-reply-${parentId}`)
+            const temp = btnViewReply.getAttribute("rest-reply");
+            console.log("Temp: " + temp)
+            btnViewReply.setAttribute("rest-reply", temp - commentsResult.comments.length);
+            if (temp - commentsResult.comments.length <= 0) {
+                btnViewReply.remove();
+            } else {
+                btnViewReply.innerText = `Xem ${temp - commentsResult.comments.length} phản hồi`;
+            }
+        }
+    }
+
+    // send request get comment list
+    function sendRequestComments(offset, parentId) {
+        stompClient.send(`/app/comments/[[${news.id}]]/${offset}`, {}, parentId);
+    }
+
+    const formComment = document.getElementById("form-comment");
+    const btnSendComment = document.getElementById("btn-send-comment");
+    btnSendComment && btnSendComment.addEventListener("click", function () {
+        const content = formComment.querySelector("textarea").value;
+        const newsId = /*[[${news.id}]]*/ '';
+        const comment = {
+            content,
+            newsId
+        }
+        sendComment(comment)
+        formComment.querySelector("textarea").value = ""
+    })
+
+    const btnMoreComment = document.getElementById("btn-more-comment");
+    btnMoreComment.addEventListener("click", function () {
+        btnMoreComment.innerText = "Xin chờ"
+        btnMoreComment.disabled = true;
+        const offset = document.querySelectorAll("#comment-list>.comment").length;
+        sendRequestComments(offset)
+    })
+</script>
+</body>
+
+</html>

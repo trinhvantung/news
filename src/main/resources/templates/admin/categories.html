@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<div th:replace="admin/layout::head('Danh mục')"></div>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<div th:replace="admin/layout::menu"></div>
+		<!-- End of Menu -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<div th:replace="admin/layout::header"></div>
+				<!-- End of Header -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+					<!-- Page Heading -->
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800">Danh mục</h1>
+					</div>
+					<div class="text-center h4 mb-4 text-success"
+						th:if="${param['edit-success'] != null}">Cập nhật danh mục
+						thành công</div>
+					<div class="text-center h4 mb-4 text-success"
+						th:if="${param['create-success'] != null}">Tạo danh mục mới
+						thành công</div>
+					<div class="text-center h4 mb-4 text-success"
+						th:if="${param['delete-success'] != null}">Xóa danh mục
+						thành công</div>
+					<!-- DataTales Example -->
+					<div class="card shadow mb-4">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold text-primary">Danh sách danh
+								mục</h6>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-bordered" id="dataTable" width="100%"
+									cellspacing="0">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>Tên danh mục</th>
+											<th>Slug</th>
+											<th>Trạng thái</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:each="category:${page.getContent()}">
+											<tr>
+												<td th:text="${category.id}"></td>
+												<td th:text="${category.name}"></td>
+												<td th:text="${category.slug}"></td>
+												<td><th:block th:if="${category.enable}">
+														<div class="text-success text-lg">
+															<i class="far fa-eye"></i>
+														</div>
+													</th:block> <th:block th:if="${!category.enable}">
+														<div class="text-danger text-lg">
+															<i class="far fa-eye-slash"></i>
+														</div>
+													</th:block></td>
+												<td>
+													<div class="d-flex">
+														<a th:href="@{'/admin/category/edit/' + ${category.id}}"
+															class="text-primary text-lg mr-3"><i
+															class="far fa-edit" role="button"></i></a>
+														<div
+															class="text-danger text-lg cursor-pointer btn-delete-user"
+															role="button" th:category-id="${category.id}">
+															<i class="far fa-trash-alt"></i>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+								<div class="d-flex justify-content-center">
+									<div class="page"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Modal -->
+			<div class="modal fade" id="modal" tabindex="-1" role="dialog"
+				aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Cảnh báo</h5>
+							<button class="close" type="button" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+						</div>
+						<div class="modal-body"></div>
+						<div class="modal-footer">
+							<button class="btn btn-secondary" type="button"
+								data-dismiss="modal">Đóng</button>
+							<a class="btn btn-danger btn-confirm-delete-category">Xóa</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End of Modal -->
+
+			<!-- Footer -->
+			<div th:replace="admin/layout::footer"></div>
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{/admin/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/admin/js/pagination.js}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{/admin/js/sb-admin-2.min.js}"></script>
+	<script th:inline="javascript">
+		const btnDeleteUsers = document.getElementsByClassName("btn-delete-user");
+
+		for (btnDeleteUser of btnDeleteUsers) {
+			btnDeleteUser.addEventListener("click", function () {
+
+				$("#modal").modal();
+				$(".modal-body").text(`Xóa danh mục có id: ${this.getAttribute('category-id')}`)
+				$(".btn-confirm-delete-category").attr("href", `/admin/category/delete/${this.getAttribute('category-id')}`)
+			})
+		}
+		Pagination({
+			selector : ".page",
+			totalItem : /*[[${page.getTotalElements()}]]*/'',
+			itemPerPage : /*[[${page.getPageable().getPageSize()}]]*/'',
+			currentPage : /*[[${page.getNumber()} + 1]]*/'',
+			pageParam : "page"
+		});
+	</script>
+
+</body>
+
+</html>

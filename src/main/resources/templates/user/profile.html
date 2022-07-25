@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+<div th:replace="user/layout::head('Tài khoản')"></div>
+</head>
+
+<body>
+	<div th:replace="user/layout::header"></div>
+
+
+	<div class="main">
+		<div class="container">
+			<div class="profile mt-5">
+				<div class="profile-form">
+					<div th:if="${param.success != null}"
+						class="text-success text-center mb-5">Cập nhật tài khoản
+						thành công</div>
+					<form th:object="${user}" th:action="@{/ho-so}"
+						enctype="multipart/form-data" method="post">
+						<div class="profile-image">
+							<div>
+								<img th:src="${user.getImageUrl()}" alt="Image">
+								<div>
+									<i class="fas fa-camera-alt"></i>
+								</div>
+								<input type="file" accept="image/*" hidden name="imageFile" />
+							</div>
+							<span th:text="${user.fullname}"></span>
+						</div>
+						<div class="form-group mb-3">
+							<label class="form-label" for="username">Email</label> <input
+								type="text" class="form-control" id="email" placeholder="Email"
+								th:field="*{email}" disabled th:value="${user.email}">
+						</div>
+						<div class="form-group mb-4">
+							<label for="fullname" class="form-label">Họ tên</label> <input
+								type="text" class="form-control" id="fullname"
+								th:field="*{fullname}" placeholder="Họ tên"
+								th:value="${user.fullname}">
+						</div>
+						<div class="d-flex">
+							<div class="">
+								<button class="btn btn-primary">Lưu</button>
+							</div>
+							<div class="mx-3">
+								<button type="button" class="btn" data-bs-toggle="modal"
+									data-bs-target="#changePasswordModal">Đổi mật khẩu</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="changePasswordModal" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Đổi mật khẩu</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="text-success text-center mb-3 d-none" id="change-password-success">Đổi mật
+						khẩu thành công</div>
+					<div class="form-group mb-3">
+						<label class="form-label" for="password">Mật khẩu</label> <input
+							type="password" class="form-control" id="password"
+							placeholder="Mật khẩu">
+						<div class="text-danger d-none" style="font-size: 14px;"
+							id="passwordError">Đổi mật khẩu thành công</div>
+					</div>
+					<div class="form-group mb-3">
+						<label class="form-label" for="new-password">Mật khẩu mới</label>
+						<input type="password" class="form-control" id="new-password"
+							placeholder="Mật khẩu mới">
+						<div class="text-danger d-none" style="font-size: 14px;"
+							id="newPasswordError">Đổi mật khẩu thành công</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn" data-bs-dismiss="modal">Đóng</button>
+					<button type="button" class="btn btn-primary"
+						id="btn-save-password">Lưu</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="user/layout::footer"></div>
+	<script th:src="@{/user/bootstrap/js/bootstrap.js}"></script>
+	<script th:src="@{/user/jquery/jquery-3.6.0.min.js}"></script>
+
+	<script>
+        const image = document.querySelector(".profile-image>div");
+        const imageInput = document.querySelector(".profile-image>div>input");
+        const imagePreview = document.querySelector(".profile-image>div>img");
+
+        image.addEventListener("click", function () {
+            imageInput.click();
+        })
+
+        imageInput.onchange = evt => {
+            const [file] = imageInput.files
+            if (file) {
+                imagePreview.src = URL.createObjectURL(file)
+            }
+        }
+        
+        const btnSavePassword = document.getElementById("btn-save-password");
+        if(btnSavePassword) {
+        	btnSavePassword.addEventListener("click", function () {
+        		const password = document.getElementById("password").value;
+        		const newPassword = document.getElementById("new-password").value;
+        		
+        		btnSavePassword.disable = true;
+        		btnSavePassword.innerText = "Xin chờ"
+        		
+        		$.ajax({
+					url: `/doi-mat-khau`,
+					type: 'POST',
+					contentType: "application/json; charset=utf-8",
+					dataType: 'json',
+					data: JSON.stringify({
+						password,
+						newPassword
+					}),
+					statusCode: {
+					    400: function(response) {
+					    	btnSavePassword.disable = false;
+			        		btnSavePassword.innerText = "Lưu"
+							console.log(response)
+							document.getElementById("change-password-success").classList.add("d-none")
+							const errorMessage = response.responseJSON;
+			        		if(errorMessage) {
+			        			if(errorMessage["password"]) {
+				        			const element = document.getElementById("passwordError");
+				        			element.classList.remove("d-none");
+				        			element.innerText = errorMessage["password"];
+				        		} else {
+				        			const element = document.getElementById("passwordError");
+				        			element.classList.add("d-none");
+				        		}
+
+				        		if(errorMessage["newPassword"]) {
+				        			const element = document.getElementById("newPasswordError");
+				        			element.classList.remove("d-none");
+				        			element.innerText = errorMessage["newPassword"];
+				        		} else {
+				        			const element = document.getElementById("newPasswordError");
+				        			element.classList.add("d-none");
+				        		}
+			        		} else {
+			        			document.getElementById("passwordError").classList.add("d-none");
+								document.getElementById("newPasswordError").classList.add("d-none");
+			        		}
+					    },
+					    200: function(response) {
+					    	btnSavePassword.disable = false;
+			        		btnSavePassword.innerText = "Lưu"
+							console.log(response)
+							document.getElementById("passwordError").classList.add("d-none");
+							document.getElementById("newPasswordError").classList.add("d-none");
+							document.getElementById("change-password-success").classList.remove("d-none")
+							document.getElementById("password").value = ""
+							document.getElementById("new-password").value = ""
+							
+					    }
+					 }
+				});
+        	})
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<div
+	th:replace="admin/layout::head(${user.id == null ? 'Tạo mới người dùng' : 'Cập nhật người dùng'})"></div>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<div th:replace="admin/layout::menu"></div>
+		<!-- End of Menu -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<div th:replace="admin/layout::header"></div>
+				<!-- End of Header -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+					<!-- Page Heading -->
+					<div
+						class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800" th:if="${user.id == null}">Create
+							New User</h1>
+						<h1 class="h3 mb-0 text-gray-800" th:unless="${user.id == null}">Edit
+							User</h1>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<form method="post"
+								th:action="${user.id == null ? '/admin/users/create' : '/admin/users/edit'}"
+								th:object="${user}">
+								<th:block th:if="${user.id != null}">
+									<input type="hidden" th:field="*{id}">
+								</th:block>
+								<div class="form-group">
+									<label for="email">Email</label> <input type="email"
+										class="form-control" th:field="*{email}" id="email"
+										placeholder="Email">
+									<div class="invalid-feedback d-block"
+										th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+								</div>
+								<div class="form-group">
+									<label for="fullname">Họ tên</label> <input type="text"
+										class="form-control" th:field="*{fullname}" id="fullname"
+										placeholder="Họ tên">
+									<div class="invalid-feedback d-block"
+										th:if="${#fields.hasErrors('fullname')}"
+										th:errors="*{fullname}"></div>
+								</div>
+								<div class="form-group">
+									<label for="password">Mật khẩu</label> <input type="password"
+										th:field="*{password}" class="form-control" id="password"
+										placeholder="Mật khẩu">
+									<div class="invalid-feedback d-block"
+										th:if="${#fields.hasErrors('password')}"
+										th:errors="*{password}"></div>
+								</div>
+
+								<div class="form-group">
+									<label for="status">Trạng thái</label> <br> <input
+										th:value="1" type="radio" th:field="*{nonLocked}" checked>
+									<label for="upload1">Hoạt động</label><br> <input
+										th:value="0" type="radio" th:field="*{nonLocked}"> <label
+										for="upload1">Khóa</label><br>
+									<div class="invalid-feedback d-block"
+										th:if="${#fields.hasErrors('nonLocked')}"
+										th:errors="*{nonLocked}"></div>
+								</div>
+
+								<div class="form-group">
+									<label for="roles">Chức vụ</label> <br>
+									<th:block th:each="role:${roleList}">
+										<input th:value="${role.id}" type="checkbox"
+											th:field="*{roles}">
+										<label th:text="${role.name}"></label>
+										<br>
+									</th:block>
+									<div class="invalid-feedback d-block"
+										th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></div>
+								</div>
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Footer -->
+			<div th:replace="admin/layout::footer"></div>
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{/admin/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{/admin/js/sb-admin-2.min.js}"></script>
+
+	<!--<script>
+		const image = document.getElementById("image");
+		const previewImage = document.querySelector(".image-preview>img");
+
+		image.onchange = evt => {
+			const [file] = image.files
+			if (file) {
+				previewImage.src = URL.createObjectURL(file)
+			}
+		}
+	</script>-->
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="head (title)">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="icon" th:href="@{/user/img/icon.png}" type="image/icon type">
+	<link rel="stylesheet" th:href="@{/user/bootstrap/css/bootstrap.css}">
+	<link rel="stylesheet" th:href="@{/user/css/base.css}">
+	<link rel="stylesheet" th:href="@{/user/css/styles.css}">
+	<link rel="stylesheet" th:href="@{/user/css/responsive.css}">
+	<link rel="stylesheet" th:href="@{/user/fontawesome/css/all.css}">
+
+	<title th:text="${title}"></title>
+</th:block>
+
+<body>
+
+	<header class="header" th:fragment="header">
+		<div>
+			<div class="container">
+				<div class="header__top">
+					<div class="social">
+						<div>
+							<a href="http://facebook.com"> <i
+								class="fab fa-facebook-square"></i>
+							</a>
+						</div>
+						<div>
+							<a href="http://instagram.com"> <i class="fab fa-instagram"></i>
+							</a>
+						</div>
+						<div>
+							<a href="http://youtube.com"> <i class="fab fa-youtube"></i>
+							</a>
+						</div>
+					</div>
+					<div class="logo">
+						<img th:src="@{/user/img/logo.png}" alt="logo">
+					</div>
+					<div class="header__top__right">
+
+						<div class="header__icon__search button-search-mobile">
+							<i class="fas fa-search"></i>
+						</div>
+						<div class="header__icon__account"
+							sec:authorize="isAuthenticated()">
+							<div id="button-drop-down-account">
+								<span style="font-size: 16px;"
+									th:text="${#authentication.getPrincipal().getUser().getFullname()}"></span>
+							</div>
+							<div class="drop-down drop-down-right" id="drop-down-account">
+
+								<div class="drop-down-item"
+									sec:authorize="hasAuthority('ADMIN') or hasAuthority('MANAGER')">
+									<a th:href="@{/admin}"> <i
+										class="fas fa-fw fa-tachometer-alt"></i> <span>Dashboard</span>
+									</a>
+								</div>
+								<div class="drop-down-item">
+									<a th:href="@{/ho-so}"> <i class="far fa-address-card"></i>
+										<span>Tài khoản</span>
+									</a>
+								</div>
+								<div class="drop-down-item">
+									<a th:href="@{/dang-xuat}"> <i class="far fa-sign-out"></i>
+										<span>Đăng xuất</span>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="header__icon__account" sec:authorize="isAnonymous()">
+							<div id="button-drop-down-account">
+								<i class="fas fa-user"></i>
+							</div>
+							<div class="drop-down drop-down-right" id="drop-down-account">
+								<div class="drop-down-item">
+									<a th:href="@{/dang-nhap}"> <i class="far fa-sign-in"></i>
+										<span>Đăng nhập</span>
+									</a>
+								</div>
+								<div class="drop-down-item">
+									<a th:href="@{/dang-ky}"> <i class="far fa-user-plus"></i>
+										<span>Đăng ký</span>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="button-menu">
+							<i class="fas fa-bars"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div>
+			<div class="container">
+				<div class="header__nav">
+					<ul class="header__nav__list">
+						<li
+							th:class="${#httpServletRequest.requestURI == '/' ? 'active' : ''}"><a
+							th:href="@{/}">home</a></li>
+						<th:block th:each="category,iterable:${categories}">
+							<li th:if="${iterable.index <= 5}"
+								th:class="${#httpServletRequest.requestURI == '/danh-muc/' + category.slug ? 'active' : ''}"><a
+								th:href="@{'/danh-muc/' + ${category.slug}}"
+								th:text="${category.name}"></a></li>
+						</th:block>
+						<th:block th:if="${categories.size() > 6}">
+							<div class="dropdown">
+								<div class="drop-down-button"
+									style="padding: 0 8px; font-weight: 700;">
+									Xem thêm <i class="fas fa-caret-down"></i>
+								</div>
+								<ul class="drop-down-menu">
+									<th:block th:each="category,iterable:${categories}">
+										<li th:if="${iterable.index > 5}"><a
+											th:href="@{'/danh-muc/' + ${category.slug}}"
+											th:text="${category.name}"></a></li>
+									</th:block>
+								</ul>
+							</div>
+						</th:block>
+					</ul>
+					<div class="header__icon__search">
+						<i class="fal fa-search"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="header__search">
+			<form th:action="@{/tim-kiem}" method="get" id="form-search-header">
+				<input type="text" placeholder="Tìm kiếm" name="query">
+				<button disabled="disabled">Search</button>
+			</form>
+		</div>
+		<div class="menu">
+			<div class="menu__overlay"></div>
+			<div class="menu__main">
+				<div class="menu__header">
+					<div class="menu__close">
+						<i class="fal fa-times-circle"></i>
+					</div>
+					<div>
+						<div class="menu__logo">
+							<img th:src="@{/user/img/logo.png}" alt="logo">
+						</div>
+						<div class="menu__social">
+							<div>
+								<a href="http://facebook.com"> <i
+									class="fab fa-facebook-square"></i>
+								</a>
+							</div>
+							<div>
+								<a href="http://instagram.com"> <i class="fab fa-instagram"></i>
+								</a>
+							</div>
+							<div>
+								<a href="http://youtube.com"> <i class="fab fa-youtube"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="menu__content">
+
+					<th:block sec:authorize="isAuthenticated()">
+
+						<a th:href="@{/admin}" class="menu__item"
+							sec:authorize="hasAuthority('ADMIN') or hasAuthority('MANAGER')">
+							<i class="fas fa-fw fa-tachometer-alt"></i>Dashboard
+						</a>
+						<a th:href="@{/ho-so}" class="menu__item"
+							style="text-transform: inherit;"><i
+							class="far fa-address-card"></i> <th:block
+								th:text="${#authentication.getPrincipal().getUser().getFullname()}"></th:block>
+						</a>
+						<a th:href="@{/dang-xuat}" class="menu__item"> <i
+							class="far fa-sign-out"></i></i>đăng xuất
+						</a>
+					</th:block>
+					<th:block sec:authorize="isAnonymous()">
+						<a th:href="@{/dang-nhap}" class="menu__item"><i
+							class="far fa-sign-in"></i>đăng nhập</a>
+						<a th:href="@{/dang-ky}" class="menu__item"><i
+							class="far fa-user-plus"></i>đăng ký</a>
+					</th:block>
+				</div>
+				<div class="menu__content">
+					<a th:href="@{/}"
+						th:class="'menu__item ' + ${#httpServletRequest.requestURI == '/' ? 'active' : ''}">home</a>
+
+					<th:block th:each="category:${categories}">
+						<a th:href="@{'/danh-muc/' + ${category.slug}}" class="menu__item"
+							th:text="${category.name}"
+							th:class="'menu__item ' + ${#httpServletRequest.requestURI == '/danh-muc/' + category.slug ? 'active' : ''}"></a>
+					</th:block>
+				</div>
+			</div>
+		</div>
+	</header>
+
+
+
+
+
+	<th:block th:fragment="footer">
+		<footer class="footer">
+			<div class="container">
+				<div class="footer__top">
+					<div class="logo">
+						<img th:src="@{/user/img/logo.png}" alt="logo">
+					</div>
+					<div class="social">
+						<div>
+							<a href="http://facebook.com"> <i
+								class="fab fa-facebook-square"></i>
+							</a>
+						</div>
+						<div>
+							<a href="http://instagram.com"> <i class="fab fa-instagram"></i>
+							</a>
+						</div>
+						<div>
+							<a href="http://youtube.com"> <i class="fab fa-youtube"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="footer__copyright d-flex justify-content-center">
+					<span>News © 2022. All Rights Reserved</span>
+				</div>
+			</div>
+		</footer>
+
+		<script th:src="@{/user/js/index.js}"></script>
+	</th:block>
+</body>
+
+</html>

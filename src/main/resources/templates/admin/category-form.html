@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<div th:replace="admin/layout::head(${category.id == null ? 'Tạo mới danh mục' : 'Cập nhật danh mục'})"></div>
+</head>
+
+<body id="page-top">
+
+	<!-- Page Wrapper -->
+	<div id="wrapper">
+
+		<!-- Menu -->
+		<div th:replace="admin/layout::menu"></div>
+		<!-- End of Menu -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+				<!-- Header -->
+				<div th:replace="admin/layout::header"></div>
+				<!-- End of Header -->
+
+				<!-- Begin Page Content -->
+				<div class="container-fluid">
+					<!-- Page Heading -->
+					<div class="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 class="h3 mb-0 text-gray-800" th:if="${category.id == null}">Create New Category</h1>
+						<h1 class="h3 mb-0 text-gray-800" th:unless="${category.id == null}">Edit Category</h1>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<form method="post"
+								th:action="${category.id == null ? '/admin/category/create' : '/admin/category/edit'}"
+								th:object="${category}">
+								<th:block th:if="${category.id != null}">
+									<input type="hidden" th:field="*{id}">
+								</th:block>
+								<div class="form-group">
+									<label for="name">Tên danh mục</label>
+									<input type="text" class="form-control" th:field="*{name}" id="name"
+										placeholder="Tên danh mục">
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('name')}"
+										th:errors="*{name}"></div>
+								</div>
+
+								<div class="form-group">
+									<label for="slug">Slug</label>
+									<input type="text" class="form-control" th:field="*{slug}" id="slug"
+										placeholder="Slug">
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('slug')}"
+										th:errors="*{slug}"></div>
+								</div>
+
+								<br>
+
+								<div class="form-group">
+									<label for="status">Trạng thái</label>
+									<br>
+									<input th:value="1" type="radio" th:field="*{enable}" checked>
+									<label for="upload1">Hiện</label><br>
+									<input th:value="0" type="radio" th:field="*{enable}">
+									<label for="upload1">Ẩn</label><br>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('enable')}"
+										th:errors="*{enable}"></div>
+								</div>
+
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+			<!-- End of Main Content -->
+
+			<!-- Footer -->
+			<div th:replace="admin/layout::footer"></div>
+			<!-- End of Footer -->
+
+		</div>
+		<!-- End of Content Wrapper -->
+
+	</div>
+	<!-- End of Page Wrapper -->
+
+
+	<!-- Bootstrap core JavaScript-->
+	<script th:src="@{/admin/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/admin/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+	<!-- Custom scripts for all pages-->
+	<script th:src="@{/admin/js/sb-admin-2.min.js}"></script>
+	<script>
+		let nameInput, slug;
+		nameInput = document.getElementById("name");
+
+		nameInput.addEventListener("keyup", function () {
+			slug = nameInput.value.toLowerCase();
+
+			slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
+			slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+			slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
+			slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+			slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
+			slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
+			slug = slug.replace(/đ/gi, 'd');
+			slug = slug.replace(/\`|\~|\!|\@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
+			slug = slug.replace(/ /gi, '-');
+			slug = slug.replace(/\-\-\-\-\-/gi, '-');
+			slug = slug.replace(/\-\-\-\-/gi, '-');
+			slug = slug.replace(/\-\-\-/gi, '-');
+			slug = slug.replace(/\-\-/gi, '-');
+			slug = '@' + slug + '@';
+
+			slug = slug.replace(/\@\-|\-\@|\@/gi, '');
+
+			document.getElementById('slug').value = slug;
+		})
+	</script>
+</body>
+
+</html>
